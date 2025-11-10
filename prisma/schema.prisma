@@ -1,0 +1,67 @@
+// Prisma schema for Japanese Swords website
+// Learn more: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String    @id @default(cuid())
+  email     String    @unique
+  name      String
+  phone     String?
+  createdAt DateTime  @default(now())
+  inquiries Inquiry[]
+}
+
+model Sword {
+  id             String   @id @default(cuid())
+  name           String
+  nameJapanese   String
+  category       Category
+  price          Float
+  description    String
+  craftsman      String
+  era            String
+  image          String
+  specifications Json
+  available      Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Inquiry {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  swordId   String?
+  interest  Interest
+  message   String
+  status    Status   @default(PENDING)
+  createdAt DateTime @default(now())
+}
+
+enum Category {
+  KATANA
+  WAKIZASHI
+  TANTO
+}
+
+enum Interest {
+  KATANA
+  WAKIZASHI
+  TANTO
+  CUSTOM
+  CONSULTATION
+}
+
+enum Status {
+  PENDING
+  CONTACTED
+  COMPLETED
+}
